@@ -1,5 +1,10 @@
+import { ThemeProvider } from './components/theme-provider';
 import { RoutesApp } from './routes';
 
 export function App() {
-  return <RoutesApp />;
+  return (
+    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <RoutesApp />
+    </ThemeProvider>
+  );
 }
