@@ -8,7 +8,7 @@ export function Home() {
         <input
           type="text"
           placeholder="Search your notes"
-          className="w-full bg-transparent text-3xl font-semibold tracking-tight dark:font-medium outline-none placeholder:text-slate-500 transition-all duration-200 focus-visible:ring-1 focus-visible:ring-slate-600"
+          className="w-full bg-transparent text-3xl text-slate-700 dark:text-slate-300 font-semibold tracking-tight dark:font-medium outline-none placeholder:text-slate-700 dark:placeholder:text-slate-500 transition-all duration-200 focus-visible:ring-1 focus-visible:ring-slate-600"
         />
       </form>
 
