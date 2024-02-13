@@ -48,12 +48,9 @@ export function NoteCard({ note }: NoteCardProps) {
         <DialogFooter>
           <Button
             type="button"
-            className="w-full h-[5vh] rounded-none bg-slate-700 text-slate-300 text-center text-sm font-semibold outline-none transition-all duration-300 hover:bg-emerald-800 focus-visible:ring-0 focus-visible:bg-emerald-800 group"
+            className="w-full h-[5vh] rounded-none bg-rose-800 text-emerald-50 text-center text-sm font-semibold outline-none transition-all duration-300 hover:bg-rose-900 focus-visible:ring-0 focus-visible:bg-rose-900 group"
           >
-            Wish
-            <span className="ml-1 text-red-400 transition-all duration-300 group-hover:underline">
-              delete this note?
-            </span>
+            Delete this note?
           </Button>
         </DialogFooter>
       </DialogContent>
