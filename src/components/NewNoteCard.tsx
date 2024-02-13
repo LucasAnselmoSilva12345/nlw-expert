@@ -8,8 +8,21 @@ import {
 } from '@/components/ui/dialog';
 
 import { Button } from './ui/button';
+import { ChangeEvent, useState } from 'react';
 
 export function NewNoteCard() {
+  const [shouldShowOnBoarding, setShouldShowOnBoarding] = useState(true);
+
+  function handleStartEditor() {
+    setShouldShowOnBoarding(false);
+  }
+
+  function handleContentChange(event: ChangeEvent<HTMLTextAreaElement>) {
+    if (event.target.value === '') {
+      setShouldShowOnBoarding(true);
+    }
+  }
+
   return (
     <Dialog>
       <DialogTrigger className="rounded-md flex flex-col bg-slate-700 p-5 gap-3 text-left outline-none transition-all duration-200 hover:ring-2 hover:ring-slate-600 focus-visible:ring-2 focus-visible:ring-lime-400">
@@ -30,17 +43,29 @@ export function NewNoteCard() {
             </span>
           </DialogTitle>
         </DialogHeader>
+
         <div className="flex flex-1 flex-col gap-3 px-5">
-          <p className="text-sm leading-6 text-slate-800 dark:text-slate-400">
-            Start{' '}
-            <button className="font-medium text-lime-400 hover:underline">
-              recording a note via audio
-            </button>{' '}
-            or if you prefer,{' '}
-            <button className="font-medium text-lime-400 hover:underline">
-              use text
-            </button>
-          </p>
+          {shouldShowOnBoarding ? (
+            <p className="text-sm leading-6 text-slate-800 dark:text-slate-400">
+              Start{' '}
+              <button className="font-medium text-lime-400 hover:underline">
+                recording a note via audio
+              </button>{' '}
+              or if you prefer,{' '}
+              <button
+                onClick={handleStartEditor}
+                className="font-medium text-lime-400 hover:underline"
+              >
+                use text
+              </button>
+            </p>
+          ) : (
+            <textarea
+              autoFocus
+              className="text-sm leading-6 text-slate-400 bg-transparent resize-none flex-1 outline-none"
+              onChange={handleContentChange}
+            />
+          )}
         </div>
 
         <DialogFooter>
