@@ -1,19 +1,62 @@
-export function NoteCard() {
-  return (
-    <button className="rounded-md text-left dark:bg-slate-800 p-5 space-y-3 overflow-hidden relative outline-none transition-all duration-200 hover:ring-2 hover:ring-slate-600 focus-visible:ring-2 focus-visible:ring-lime-400">
-      <span className="text-sm font-medium text-slate-950 dark:text-slate-300">
-        há 2 dias
-      </span>
-      <p className="text-sm leading-6 text-slate-800 dark:text-slate-400">
-        No mundo da educação, a qualidade dos materiais de estudo desempenha um
-        papel crucial no sucesso acadêmico dos estudantes. A escolha cuidadosa e
-        a utilização eficaz desses materiais podem significar a diferença entre
-        simplesmente passar por um curso e realmente dominar o conteúdo. Neste
-        texto, exploraremos estratégias para maximizar o potencial dos materiais
-        de estudo, desde livros didáticos até recursos online.
-      </p>
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 
-      <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/40 to-black/0 dark:from-black/60 dark:to-black/0 pointer-events-none" />
-    </button>
+import { formatDistanceToNow } from 'date-fns';
+import { Button } from './ui/button';
+
+interface NoteCardProps {
+  note: {
+    date: Date;
+    content: string;
+  };
+}
+
+export function NoteCard({ note }: NoteCardProps) {
+  return (
+    <Dialog>
+      <DialogTrigger className="rounded-md text-left dark:bg-slate-800 flex flex-col p-5 gap-3 overflow-hidden relative outline-none transition-all duration-200 hover:ring-2 hover:ring-slate-600 focus-visible:ring-2 focus-visible:ring-lime-400">
+        <span className="text-sm font-medium text-slate-950 dark:text-slate-300">
+          {note.date.toISOString()}
+        </span>
+        <p className="text-sm leading-6 text-slate-800 dark:text-slate-400">
+          {note.content}
+        </p>
+
+        <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/40 to-black/0 dark:from-black/60 dark:to-black/0 pointer-events-none" />
+      </DialogTrigger>
+
+      <DialogContent className="w-4/5 h-[60vh] lg:w-full p-0 bg-slate-800 rounded-md flex flex-col overflow-hidden outline-none">
+        <DialogHeader className="pt-[14px] px-5">
+          <DialogTitle>
+            <span className="text-sm font-medium text-slate-950 dark:text-slate-300">
+              {formatDistanceToNow(note.date, { addSuffix: true })}
+            </span>
+          </DialogTitle>
+        </DialogHeader>
+        <div className="flex flex-1 flex-col gap-3 px-5">
+          <p className="text-sm leading-6 text-slate-800 dark:text-slate-400">
+            {note.content}
+          </p>
+        </div>
+
+        <DialogFooter>
+          <Button
+            type="button"
+            className="w-full h-[5vh] rounded-none bg-slate-700 text-slate-300 text-center text-sm font-semibold outline-none transition-all duration-300 hover:bg-emerald-800 focus-visible:ring-0 focus-visible:bg-emerald-800 group"
+          >
+            Wish
+            <span className="ml-1 text-red-400 transition-all duration-300 group-hover:underline">
+              delete this note?
+            </span>
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
