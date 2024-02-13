@@ -1,6 +1,11 @@
 import { NewNoteCard } from '../components/NewNoteCard';
 import { NoteCard } from '../components/NoteCard';
 
+const noteProps = {
+  date: new Date(),
+  content: 'Hello World',
+};
+
 export function Home() {
   return (
     <section className="mx-auto w-full p-6 xl:max-w-7xl xl:p-0 xl:my-6 space-y-6">
@@ -17,10 +22,7 @@ export function Home() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-[250px]">
         <NewNoteCard />
 
-        <NoteCard />
-        <NoteCard />
-        <NoteCard />
-        <NoteCard />
+        <NoteCard note={noteProps} />
       </div>
     </section>
   );
