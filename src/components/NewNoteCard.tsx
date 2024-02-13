@@ -8,19 +8,29 @@ import {
 } from '@/components/ui/dialog';
 
 import { Button } from './ui/button';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, FormEvent, useState } from 'react';
+import { toast } from 'sonner';
 
 export function NewNoteCard() {
   const [shouldShowOnBoarding, setShouldShowOnBoarding] = useState(true);
+  const [content, setContent] = useState('');
 
   function handleStartEditor() {
     setShouldShowOnBoarding(false);
   }
 
   function handleContentChange(event: ChangeEvent<HTMLTextAreaElement>) {
+    setContent(event.target.value);
+
     if (event.target.value === '') {
       setShouldShowOnBoarding(true);
     }
+  }
+
+  function handleSaveNote(event: FormEvent) {
+    event.preventDefault();
+    console.log(content);
+    toast.success('Event has been created');
   }
 
   return (
@@ -44,38 +54,40 @@ export function NewNoteCard() {
           </DialogTitle>
         </DialogHeader>
 
-        <div className="flex flex-1 flex-col gap-3 px-5">
-          {shouldShowOnBoarding ? (
-            <p className="text-sm leading-6 text-slate-800 dark:text-slate-400">
-              Start{' '}
-              <button className="font-medium text-lime-400 hover:underline">
-                recording a note via audio
-              </button>{' '}
-              or if you prefer,{' '}
-              <button
-                onClick={handleStartEditor}
-                className="font-medium text-lime-400 hover:underline"
-              >
-                use text
-              </button>
-            </p>
-          ) : (
-            <textarea
-              autoFocus
-              className="text-sm leading-6 text-slate-400 bg-transparent resize-none flex-1 outline-none"
-              onChange={handleContentChange}
-            />
-          )}
-        </div>
+        <form onSubmit={handleSaveNote} className="flex-1 flex flex-col">
+          <div className="flex flex-1 flex-col gap-3 px-5">
+            {shouldShowOnBoarding ? (
+              <p className="text-sm leading-6 text-slate-800 dark:text-slate-400">
+                Start{' '}
+                <button className="font-medium text-lime-400 hover:underline">
+                  recording a note via audio
+                </button>{' '}
+                or if you prefer,{' '}
+                <button
+                  onClick={handleStartEditor}
+                  className="font-medium text-lime-400 hover:underline"
+                >
+                  use text
+                </button>
+              </p>
+            ) : (
+              <textarea
+                autoFocus
+                className="text-sm leading-6 text-slate-400 bg-transparent resize-none flex-1 outline-none"
+                onChange={handleContentChange}
+              />
+            )}
+          </div>
 
-        <DialogFooter>
-          <Button
-            type="button"
-            className="w-full h-[5vh] rounded-none bg-emerald-700 text-emerald-50 text-center text-sm font-semibold outline-none transition-all duration-300 hover:bg-emerald-800 focus-visible:ring-0 focus-visible:bg-emerald-800"
-          >
-            Save the note
-          </Button>
-        </DialogFooter>
+          <DialogFooter>
+            <Button
+              type="submit"
+              className="w-full h-[5vh] rounded-none bg-emerald-700 text-emerald-50 text-center text-sm font-semibold outline-none transition-all duration-300 hover:bg-emerald-800 focus-visible:ring-0 focus-visible:bg-emerald-800"
+            >
+              Save the note
+            </Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );
