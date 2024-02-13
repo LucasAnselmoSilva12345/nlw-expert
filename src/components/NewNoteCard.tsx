@@ -30,7 +30,7 @@ export function NewNoteCard() {
   function handleSaveNote(event: FormEvent) {
     event.preventDefault();
     console.log(content);
-    toast.success('Event has been created');
+    toast.success('Note has been created');
   }
 
   return (
