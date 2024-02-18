@@ -17,6 +17,7 @@ interface NewNoteCardProps {
 
 export function NewNoteCard({ onNoteCreated }: NewNoteCardProps) {
   const [shouldShowOnBoarding, setShouldShowOnBoarding] = useState(true);
+  const [isRecording, setIsRecording] = useState(false);
   const [content, setContent] = useState('');
 
   function handleStartEditor() {
@@ -41,6 +42,14 @@ export function NewNoteCard({ onNoteCreated }: NewNoteCardProps) {
     toast.success('Note has been created');
   }
 
+  function handleStartRecording() {
+    setIsRecording(true);
+  }
+
+  function handleStopRecording() {
+    setIsRecording(false);
+  }
+
   return (
     <Dialog>
       <DialogTrigger className="rounded-md flex flex-col bg-slate-700 p-5 gap-3 text-left outline-none transition-all duration-200 hover:ring-2 hover:ring-slate-600 focus-visible:ring-2 focus-visible:ring-lime-400">
@@ -62,16 +71,21 @@ export function NewNoteCard({ onNoteCreated }: NewNoteCardProps) {
           </DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSaveNote} className="flex-1 flex flex-col">
+        <form className="flex-1 flex flex-col">
           <div className="flex flex-1 flex-col gap-3 px-5">
             {shouldShowOnBoarding ? (
               <p className="text-sm leading-6 text-slate-800 dark:text-slate-400">
                 Start{' '}
-                <button className="font-medium text-lime-400 hover:underline">
+                <button
+                  type="button"
+                  onClick={handleStartRecording}
+                  className="font-medium text-lime-400 hover:underline"
+                >
                   recording a note via audio
                 </button>{' '}
                 or if you prefer,{' '}
                 <button
+                  type="button"
                   onClick={handleStartEditor}
                   className="font-medium text-lime-400 hover:underline"
                 >
@@ -89,12 +103,24 @@ export function NewNoteCard({ onNoteCreated }: NewNoteCardProps) {
           </div>
 
           <DialogFooter>
-            <Button
-              type="submit"
-              className="w-full h-[5vh] rounded-none bg-emerald-700 text-emerald-50 text-center text-sm font-semibold outline-none transition-all duration-300 hover:bg-emerald-800 focus-visible:ring-0 focus-visible:bg-emerald-800"
-            >
-              Save the note
-            </Button>
+            {isRecording ? (
+              <Button
+                type="button"
+                onClick={handleStopRecording}
+                className="w-full h-[5vh] flex items-center justify-center gap-2 rounded-none bg-green-700 text-emerald-50 text-center text-sm font-semibold outline-none transition-all duration-300 hover:bg-green-800 focus-visible:ring-0 focus-visible:bg-green-800"
+              >
+                <div className="size-3 rounded-full bg-red-500 animate-pulse" />
+                Recording... (click to interrupted)
+              </Button>
+            ) : (
+              <Button
+                type="button"
+                onClick={handleSaveNote}
+                className="w-full h-[5vh] rounded-none bg-emerald-700 text-emerald-50 text-center text-sm font-semibold outline-none transition-all duration-300 hover:bg-emerald-800 focus-visible:ring-0 focus-visible:bg-emerald-800"
+              >
+                Save the note
+              </Button>
+            )}
           </DialogFooter>
         </form>
       </DialogContent>
