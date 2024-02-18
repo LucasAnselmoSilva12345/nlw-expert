@@ -15,6 +15,8 @@ interface NewNoteCardProps {
   onNoteCreated: (content: string) => void;
 }
 
+let speechRecognition: SpeechRecognition | null = null;
+
 export function NewNoteCard({ onNoteCreated }: NewNoteCardProps) {
   const [shouldShowOnBoarding, setShouldShowOnBoarding] = useState(true);
   const [isRecording, setIsRecording] = useState(false);
@@ -47,11 +49,50 @@ export function NewNoteCard({ onNoteCreated }: NewNoteCardProps) {
   }
 
   function handleStartRecording() {
+    const isSpeechRecognitionAPIIsAvailable =
+      'SpeechRecognition' in window || 'webkitSpeechRecognition' in window;
+
+    if (!isSpeechRecognitionAPIIsAvailable) {
+      alert(
+        "Sorry... Your Browser doesn't support the API of speech recording"
+      );
+      return;
+    }
+
     setIsRecording(true);
+    setShouldShowOnBoarding(false);
+
+    const SpeechRecognitionAPI =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    speechRecognition = new SpeechRecognitionAPI();
+
+    speechRecognition.lang = 'en-US';
+    speechRecognition.continuous = true;
+    speechRecognition.maxAlternatives = 1;
+    speechRecognition.interimResults = true;
+
+    speechRecognition.onresult = (event) => {
+      const transcription = Array.from(event.results).reduce((text, result) => {
+        return text.concat(result[0].transcript);
+      }, '');
+
+      setContent(transcription);
+    };
+
+    speechRecognition.onerror = (event) => {
+      console.error(event);
+    };
+
+    speechRecognition.start();
   }
 
   function handleStopRecording() {
     setIsRecording(false);
+
+    if (speechRecognition !== null) {
+      speechRecognition.stop();
+    }
   }
 
   return (
