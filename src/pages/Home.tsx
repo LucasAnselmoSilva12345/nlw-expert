@@ -1,12 +1,26 @@
+import { useState } from 'react';
 import { NewNoteCard } from '../components/NewNoteCard';
 import { NoteCard } from '../components/NoteCard';
 
-const noteProps = {
-  date: new Date(),
-  content: 'Hello World',
-};
+interface NotesProps {
+  id: string;
+  date: Date;
+  content: string;
+}
 
 export function Home() {
+  const [notes, setNotes] = useState<NotesProps[]>([]);
+
+  function onNoteCreated(content: string) {
+    const newNote = {
+      id: crypto.randomUUID(),
+      date: new Date(),
+      content,
+    };
+
+    setNotes([newNote, ...notes]);
+  }
+
   return (
     <section className="mx-auto w-full p-6 xl:max-w-7xl xl:p-0 xl:my-6 space-y-6">
       <form className="w-full">
@@ -20,9 +34,11 @@ export function Home() {
       <div className="h-px bg-slate-700" />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-[250px]">
-        <NewNoteCard />
+        <NewNoteCard onNoteCreated={onNoteCreated} />
 
-        <NoteCard note={noteProps} />
+        {notes.map((noteProps) => {
+          return <NoteCard key={noteProps.id} note={noteProps} />;
+        })}
       </div>
     </section>
   );

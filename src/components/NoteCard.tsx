@@ -22,7 +22,7 @@ export function NoteCard({ note }: NoteCardProps) {
     <Dialog>
       <DialogTrigger className="rounded-md text-left dark:bg-slate-800 flex flex-col p-5 gap-3 overflow-hidden relative outline-none transition-all duration-200 hover:ring-2 hover:ring-slate-600 focus-visible:ring-2 focus-visible:ring-lime-400">
         <span className="text-sm font-medium text-slate-950 dark:text-slate-300">
-          {note.date.toISOString()}
+          {formatDistanceToNow(note.date, { addSuffix: true })}
         </span>
         <p className="text-sm leading-6 text-slate-800 dark:text-slate-400">
           {note.content}
