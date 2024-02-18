@@ -11,8 +11,15 @@ import { Button } from './ui/button';
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { toast } from 'sonner';
 
-export function NewNoteCard() {
+interface NewNoteCardProps {
+  onNoteCreated: (content: string) => void;
+}
+
+let speechRecognition: SpeechRecognition | null = null;
+
+export function NewNoteCard({ onNoteCreated }: NewNoteCardProps) {
   const [shouldShowOnBoarding, setShouldShowOnBoarding] = useState(true);
+  const [isRecording, setIsRecording] = useState(false);
   const [content, setContent] = useState('');
 
   function handleStartEditor() {
@@ -29,8 +36,63 @@ export function NewNoteCard() {
 
   function handleSaveNote(event: FormEvent) {
     event.preventDefault();
-    console.log(content);
+
+    if (content === '') {
+      return;
+    }
+
+    onNoteCreated(content);
+    setContent('');
+    setShouldShowOnBoarding(true);
+
     toast.success('Note has been created');
+  }
+
+  function handleStartRecording() {
+    const isSpeechRecognitionAPIIsAvailable =
+      'SpeechRecognition' in window || 'webkitSpeechRecognition' in window;
+
+    if (!isSpeechRecognitionAPIIsAvailable) {
+      alert(
+        "Sorry... Your Browser doesn't support the API of speech recording"
+      );
+      return;
+    }
+
+    setIsRecording(true);
+    setShouldShowOnBoarding(false);
+
+    const SpeechRecognitionAPI =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    speechRecognition = new SpeechRecognitionAPI();
+
+    speechRecognition.lang = 'en-US';
+    speechRecognition.continuous = true;
+    speechRecognition.maxAlternatives = 1;
+    speechRecognition.interimResults = true;
+
+    speechRecognition.onresult = (event) => {
+      const transcription = Array.from(event.results).reduce((text, result) => {
+        return text.concat(result[0].transcript);
+      }, '');
+
+      setContent(transcription);
+    };
+
+    speechRecognition.onerror = (event) => {
+      console.error(event);
+    };
+
+    speechRecognition.start();
+  }
+
+  function handleStopRecording() {
+    setIsRecording(false);
+
+    if (speechRecognition !== null) {
+      speechRecognition.stop();
+    }
   }
 
   return (
@@ -54,16 +116,21 @@ export function NewNoteCard() {
           </DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSaveNote} className="flex-1 flex flex-col">
+        <form className="flex-1 flex flex-col">
           <div className="flex flex-1 flex-col gap-3 px-5">
             {shouldShowOnBoarding ? (
               <p className="text-sm leading-6 text-slate-800 dark:text-slate-400">
                 Start{' '}
-                <button className="font-medium text-lime-400 hover:underline">
+                <button
+                  type="button"
+                  onClick={handleStartRecording}
+                  className="font-medium text-lime-400 hover:underline"
+                >
                   recording a note via audio
                 </button>{' '}
                 or if you prefer,{' '}
                 <button
+                  type="button"
                   onClick={handleStartEditor}
                   className="font-medium text-lime-400 hover:underline"
                 >
@@ -75,17 +142,30 @@ export function NewNoteCard() {
                 autoFocus
                 className="text-sm leading-6 text-slate-400 bg-transparent resize-none flex-1 outline-none"
                 onChange={handleContentChange}
+                value={content}
               />
             )}
           </div>
 
           <DialogFooter>
-            <Button
-              type="submit"
-              className="w-full h-[5vh] rounded-none bg-emerald-700 text-emerald-50 text-center text-sm font-semibold outline-none transition-all duration-300 hover:bg-emerald-800 focus-visible:ring-0 focus-visible:bg-emerald-800"
-            >
-              Save the note
-            </Button>
+            {isRecording ? (
+              <Button
+                type="button"
+                onClick={handleStopRecording}
+                className="w-full h-[5vh] flex items-center justify-center gap-2 rounded-none bg-green-700 text-emerald-50 text-center text-sm font-semibold outline-none transition-all duration-300 hover:bg-green-800 focus-visible:ring-0 focus-visible:bg-green-800"
+              >
+                <div className="size-3 rounded-full bg-red-500 animate-pulse" />
+                Recording... (click to interrupted)
+              </Button>
+            ) : (
+              <Button
+                type="button"
+                onClick={handleSaveNote}
+                className="w-full h-[5vh] rounded-none bg-emerald-700 text-emerald-50 text-center text-sm font-semibold outline-none transition-all duration-300 hover:bg-emerald-800 focus-visible:ring-0 focus-visible:bg-emerald-800"
+              >
+                Save the note
+              </Button>
+            )}
           </DialogFooter>
         </form>
       </DialogContent>

@@ -12,17 +12,19 @@ import { Button } from './ui/button';
 
 interface NoteCardProps {
   note: {
+    id: string;
     date: Date;
     content: string;
   };
+  onNoteDeleted: (id: string) => void;
 }
 
-export function NoteCard({ note }: NoteCardProps) {
+export function NoteCard({ note, onNoteDeleted }: NoteCardProps) {
   return (
     <Dialog>
       <DialogTrigger className="rounded-md text-left dark:bg-slate-800 flex flex-col p-5 gap-3 overflow-hidden relative outline-none transition-all duration-200 hover:ring-2 hover:ring-slate-600 focus-visible:ring-2 focus-visible:ring-lime-400">
         <span className="text-sm font-medium text-slate-950 dark:text-slate-300">
-          {note.date.toISOString()}
+          {formatDistanceToNow(note.date, { addSuffix: true })}
         </span>
         <p className="text-sm leading-6 text-slate-800 dark:text-slate-400">
           {note.content}
@@ -48,6 +50,7 @@ export function NoteCard({ note }: NoteCardProps) {
         <DialogFooter>
           <Button
             type="button"
+            onClick={() => onNoteDeleted(note.id)}
             className="w-full h-[5vh] rounded-none bg-rose-800 text-emerald-50 text-center text-sm font-semibold outline-none transition-all duration-300 hover:bg-rose-900 focus-visible:ring-0 focus-visible:bg-rose-900 group"
           >
             Delete this note?
